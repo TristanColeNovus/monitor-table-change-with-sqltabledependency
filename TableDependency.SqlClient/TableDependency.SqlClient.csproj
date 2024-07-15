@@ -19,6 +19,8 @@
         <RepositoryType>GitHub</RepositoryType>
         <PackageTags>SQL Server dependency notifications record table change</PackageTags>
         <NeutralLanguage />
+        <SignAssembly>True</SignAssembly>
+        <AssemblyOriginatorKeyFile>..\MorningDataKey.snk</AssemblyOriginatorKeyFile>
     </PropertyGroup>
 
     <ItemGroup>
