@@ -278,7 +278,11 @@ namespace TableDependency.SqlClient
                 if (versionNumber == 9) return SqlServerVersion.SqlServer2005;
                 if (versionNumber == 10) return SqlServerVersion.SqlServer2008;
                 if (versionNumber == 11) return SqlServerVersion.SqlServer2012;
-                if (versionNumber == 11) return SqlServerVersion.SqlServer2012;
+                if (versionNumber == 12) return SqlServerVersion.SqlServer2014;
+                if (versionNumber == 13) return SqlServerVersion.SqlServer2016;
+                if (versionNumber == 14) return SqlServerVersion.SqlServer2017;
+                if (versionNumber == 15) return SqlServerVersion.SqlServer2019;
+                if (versionNumber == 16) return SqlServerVersion.SqlServer2022;
             }
             catch
             {
