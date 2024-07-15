@@ -27,7 +27,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 using System.Diagnostics;
 using System.Linq;
 using System.Text;
@@ -195,7 +195,7 @@ namespace TableDependency.SqlClient
                 _task?.Wait();
             }
 
-            _task = null;            
+            _task = null;
             _disposed = true;
 
             this.WriteTraceMessage(TraceLevel.Info, "Stopped waiting for notification.");
@@ -277,6 +277,7 @@ namespace TableDependency.SqlClient
                 if (versionNumber == 8) return SqlServerVersion.SqlServer2000;
                 if (versionNumber == 9) return SqlServerVersion.SqlServer2005;
                 if (versionNumber == 10) return SqlServerVersion.SqlServer2008;
+                if (versionNumber == 11) return SqlServerVersion.SqlServer2012;
                 if (versionNumber == 11) return SqlServerVersion.SqlServer2012;
             }
             catch
@@ -372,8 +373,8 @@ namespace TableDependency.SqlClient
                 {
                     using (var sqlCommand = sqlConnection.CreateCommand())
                     {
-                        var dropMessages = string.Join(Environment.NewLine, _processableMessages.Select((pm, index) => 
-                        { 
+                        var dropMessages = string.Join(Environment.NewLine, _processableMessages.Select((pm, index) =>
+                        {
                             if (index > 0)
                             {
                                 return this.Spacer(8) + string.Format("IF EXISTS (SELECT * FROM sys.service_message_types WITH (NOLOCK) WHERE name = N'{0}') DROP MESSAGE TYPE [{0}];", pm);
@@ -519,10 +520,10 @@ namespace TableDependency.SqlClient
                     this.WriteTraceMessage(TraceLevel.Verbose, $"Service broker {_dataBaseObjectsNamingConvention}_Receiver created.");
 
                     // Activation Store Procedure
-                    var dropMessages = string.Join(Environment.NewLine, processableMessages.Select((pm, index) => 
-                    { 
+                    var dropMessages = string.Join(Environment.NewLine, processableMessages.Select((pm, index) =>
+                    {
                         if (index > 0) return this.Spacer(8) + string.Format("IF EXISTS (SELECT * FROM sys.service_message_types WITH (NOLOCK) WHERE name = N'{0}') DROP MESSAGE TYPE [{0}];", pm);
-                        return string.Format("IF EXISTS (SELECT * FROM sys.service_message_types WITH (NOLOCK) WHERE name = N'{0}') DROP MESSAGE TYPE [{0}];", pm); 
+                        return string.Format("IF EXISTS (SELECT * FROM sys.service_message_types WITH (NOLOCK) WHERE name = N'{0}') DROP MESSAGE TYPE [{0}];", pm);
                     }));
 
                     var dropAllScript = this.PrepareScriptDropAll(dropMessages);
@@ -677,7 +678,7 @@ namespace TableDependency.SqlClient
                 }
             }
 
-            var insertIntoModifiedRecordsTable = 
+            var insertIntoModifiedRecordsTable =
                 insertIntoExceptStatement + Environment.NewLine + Environment.NewLine +
                 this.Spacer(12) +
                 $"INSERT INTO @modifiedRecordsTable SELECT {sBuilderColumns} FROM @exceptTable e {whereCondition}";
@@ -744,7 +745,7 @@ namespace TableDependency.SqlClient
                 if (string.Equals(tableColumn.Type.ToLowerInvariant(), "rowversion", StringComparison.OrdinalIgnoreCase))
                 {
                     var columnVarbinary = $"[{tableColumn.Name}] VARBINARY(8)";
-                    if (includeOldValues) columnVarbinary += $", [{ tableColumn.Name}_old] VARBINARY(8)";
+                    if (includeOldValues) columnVarbinary += $", [{tableColumn.Name}_old] VARBINARY(8)";
                     return columnVarbinary;
                 }
 
@@ -869,10 +870,10 @@ namespace TableDependency.SqlClient
         protected virtual string PrepareDeclareVariableStatement(IReadOnlyCollection<TableColumnInfo> interestedColumns)
         {
             var columnsList = (from interestedColumn in interestedColumns
-                           let variableType = $"{interestedColumn.Type.ToLowerInvariant()}" + (string.IsNullOrWhiteSpace(interestedColumn.Size)
-                           ? string.Empty
-                           : $"({interestedColumn.Size})")
-                           select this.DeclareStatement(interestedColumns, interestedColumn, variableType)).ToList();
+                               let variableType = $"{interestedColumn.Type.ToLowerInvariant()}" + (string.IsNullOrWhiteSpace(interestedColumn.Size)
+                               ? string.Empty
+                               : $"({interestedColumn.Size})")
+                               select this.DeclareStatement(interestedColumns, interestedColumn, variableType)).ToList();
 
             return string.Join(Environment.NewLine + this.Spacer(4), columnsList);
         }

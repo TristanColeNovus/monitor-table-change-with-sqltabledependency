@@ -24,7 +24,7 @@
 // OTHER DEALINGS IN THE SOFTWARE.
 #endregion
 
-using System.Data.SqlClient;
+using Microsoft.Data.SqlClient;
 
 namespace TableDependency.SqlClient.Extensions
 {
@@ -32,7 +32,7 @@ namespace TableDependency.SqlClient.Extensions
     {
         public static string GetSafeString(this SqlDataReader reader, int columnIndex)
         {
-            if (reader.IsDBNull(columnIndex)) return null;            
+            if (reader.IsDBNull(columnIndex)) return null;
             var characterMaximumLength = reader.GetValue(columnIndex);
             return characterMaximumLength?.ToString();
         }

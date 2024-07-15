@@ -71,5 +71,5 @@ namespace TableDependency.SqlClient.Utilities
 
             return privilege;
         }
-    }    
+    }
 }
